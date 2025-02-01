@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 
@@ -6,6 +8,7 @@ function Setting({settingState, setSetting}) {
     const difficulties = ["easy", "medium", "hard"];
     const [tags, setTags] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [showForm, setShowForm] = useState(false);
 
     async function getOptions(optionsFor="tags") {
         console.log("API called");
@@ -30,40 +33,109 @@ function Setting({settingState, setSetting}) {
         getOptions("categories");
     }, []);
 
+    //TODO Check if setting is valid        
+    useEffect(() => {
+        console.log(settingState.category);
+        
+    }, [settingState])
+
     return (
         <>
-            <form onSubmit={e => e.preventDefault()}>
-                
-                <label htmlFor="difficultySelect">Difficulty</label>
-                <select id="difficultySelect"
-                    onChange={e => setSetting({
-                        ...settingState,
-                        difficulty: e.target.value
-                    })}
-                >
+            <div className="SettingHeaders">
+                <h2>Settings</h2>
+                <i 
+                className="fa-solid fa-arrow-down-short-wide"
+                onClick={e => {
+                    e.target.className = "fa-solid " + (showForm ? "fa-arrow-up-short-wide" : "fa-arrow-down-short-wide");
+                    setShowForm(!showForm);
+                }}
+                ></i>
+            </div>
 
-                    {difficulties.map((value, index) => <option key={index} value={value}>{value}</option>)}
-                </select>
+                
+                <form onSubmit={e => e.preventDefault()} id="settingForm" className={showForm ? "show" : ""}>
 
-                <label htmlFor="CategorySelect">Category</label>
-                <datalist id="categoryList">
-                    {
-                        categories.map((value, index) => <option key={index} value={value}>{value}</option>)
-                    }
-                </datalist>
-                
-                <input type="text" 
-                list="categoryList"
-                placeholder="Category"
-                value={settingState.category} 
-                onChange={e => {
-                        setSetting({
-                            ...settingState,
-                            category: e.target.value
-                            });
-                }}/>
-                
-            </form>
+                    <div className="inputDiv">
+                        <h2>Difficulty</h2>
+                        <select id="difficultySelect"
+                            className="form-select w-50 mx-auto"
+                            onChange={e => setSetting({
+                                ...settingState,
+                                difficulty: e.target.value
+                            })}
+                        >
+                            {difficulties.map((value, index) => <option key={index} value={value}>{value}</option>)}
+                        </select>
+                    </div>
+
+                    <div className="inputDiv">        
+                        <h2>Categories</h2>
+                        <div className="selectDiv" id="categorySelect">
+                        {
+                                categories.map((value, index) => {
+                                    return (
+                                    <div key={index} data-value={value}
+                                        className={`tagSelectDiv ${settingState.category == value ? "chosenTag" : "unchosenTag"}`}
+                                        onClick={e => {
+                                            const category = e.target.dataset.value;
+                                            setSetting({
+                                                ...settingState,
+                                                category: (category == settingState.category ? "" : category)
+                                            });
+                                        }}
+                                    >
+                                        {value}
+                                    </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    </div>
+
+                    <div className="inputDiv">    
+                        <h2>Tags</h2>
+                        <div id="tagSelect" className="selectDiv">
+                            {
+                                tags.map((value, index) => {
+                                    return (
+                                    <div key={index} data-value={value}
+                                        className={`tagSelectDiv ${settingState.tags.includes(value) ? "chosenTag" : "unchosenTag"}`}
+                                        onClick={e => {
+                                            const tag = e.target.dataset.value;
+                                            console.log(tag);
+                                            
+                                            if(settingState.tags.includes(tag))
+                                            {
+                                                console.log("remove tags");
+                                                
+                                                //*Remove the tags
+                                                setSetting({
+                                                    ...settingState,
+                                                    tags: settingState.tags.filter((value) => {
+                                                        return value != tag
+                                                    })
+                                                });
+                                            }
+                                            else
+                                            {
+                                                settingState.tags.push(tag);
+                                                console.log(settingState.tags);
+                                                
+                                                setSetting({
+                                                    ...settingState,
+                                                });
+                                            }
+                                        }}
+                                    
+                                    >
+                                        {value}
+                                    </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    </div>
+                </form>
         </>
     )
 }

@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 .env
+src/assets/fontawesome-free-6.7.2-web/*
 
 # Editor directories and files
 .vscode/*
