@@ -16,25 +16,7 @@ function App() {
       difficulty: "easy"
   });
 
-  async function getQuiz(difficulty, category, tags=[], questions=10) {
-        try {
-          const params = [
-          `apiKey=${API_KEY}`,
-          `difficulty=${difficulty}`,
-          `category=${category}`,
-          `limit=${questions}`,
-          `tags=${
-            tags.join(",")
-          }`];
-          
-          const response = await fetch(`https://quizapi.io/api/v1/questions?${params.join("&")}`);
-          if(response.status !== 200) return undefined;
-
-          return (await response.json());
-        } catch (error) {
-          console.error(error);
-        }
-  }
+  
 
   return (
     <>
@@ -43,7 +25,7 @@ function App() {
       setSetting={setSettings}
       />
         <h1>Welcome to Quiz Game!</h1>
-      <Quiz />
+      <Quiz settingState={settings} />
     </>
   )
 }

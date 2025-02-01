@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { API_KEY } from "./config.jsx";
 
 
-const API_KEY = import.meta.env.VITE_API_KEY;
 
 function Setting({settingState, setSetting}) {
     const difficulties = ["easy", "medium", "hard"];
