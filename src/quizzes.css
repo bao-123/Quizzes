@@ -1,0 +1,26 @@
+
+#displayQuizzes
+{
+    margin-top: 2rem;
+    background-color: rgba(207, 255, 240, 0.8);
+    width: 100%;
+    border-radius: 12px;
+}
+
+.quiz
+{
+    background-color: rgb(69, 254, 245);
+    margin: 2rem auto 2rem auto;
+    height: 0;
+    width: 75%;
+    overflow: hidden;
+    transition: 0.5s ease;
+
+}
+
+
+.quiz:hover
+{
+    height: fit-content;
+}
+

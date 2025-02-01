@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 
 function Quiz({settingState}) {
     const [quizzes, setQuizzes] = useState([]);
+    const [currentAnswer, setCurrentAnswer] = useState("");
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
     async function getQuiz(difficulty, category, tags=[], questions=20) {
         try {
@@ -25,36 +27,9 @@ function Quiz({settingState}) {
         }
     }
 
-    function renderQuiz(quizzes) {
-        const questions = quizzes.map((quiz, index) => {
-            const answerEntries = Object.entries(quiz.answers);
-            const correctAnswerEntries = Object.entries(quiz.correct_answers);
-
-            const answers = answerEntries.map((entry, index) => {
-                //* Labels is 'a', 'b', 'c',...
-                const label = entry[0].charAt(0);
-                //*Check if the answer is correct
-                const isCorrect = (correctAnswerEntries[index][1] == "true");
-                
-                return {
-                    label: label,
-                    answerContent: entry[1],
-                    isCorrect: isCorrect
-                };
-            })
-            return {
-                key: index,
-                questions: quiz.questions,
-                answers: answers,
-                description: quiz.description,
-                explanation: quiz.explanation,
-                tags: quiz.tags,
-            }
-        })
-    }
     useEffect(() => {
-        console.log(quizzes);
-    }, [quizzes]);
+        console.log(currentAnswer);
+    }, [currentAnswer]);
 
     return (
     <>
@@ -76,9 +51,33 @@ function Quiz({settingState}) {
         >{quizzes.length == 0 ? "Start" : "Get new quizzes"}</button>
 
         <div id="displayQuizzes">
-            
-        </div>
+            {
+                quizzes.map((quiz, index) => {
+                  return (
+                    <div className={"quiz " + (index == currentQuestionIndex ? "show" : "")} key={index}>
+                        <p className="questions">{quiz.question}</p>
+                        <p className="questionDescription">{quiz.description}</p>
 
+                        <div className="answersContainer">
+                            {
+                                Object.keys(quiz.answers).map((value, index) => (
+                                    <div 
+                                    className={"answer" + (currentAnswer == value ? "chosenAnswer" : "unchosenAnswer")}
+                                    data-is-correct={quiz.correct_answers[value+"_correct"]}
+                                    onClick={e => {
+                                        setCurrentAnswer(value);
+                                    }}
+                                    >
+                                        <p>{quiz.answers[value]}</p>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>  
+                  )
+                })
+            }
+        </div>
     </>
     );
 }
