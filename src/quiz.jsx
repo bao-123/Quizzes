@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 
 function Quiz({settingState}) {
     const [quizzes, setQuizzes] = useState([]);
-    const [currentAnswer, setCurrentAnswer] = useState({});
+    const [currentAnswer, setCurrentAnswer] = useState("");
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [score, setScore] = useState(0);
 
     async function getQuiz(difficulty, category, tags=[], questions=20) {
         try {
@@ -38,6 +39,10 @@ function Quiz({settingState}) {
     <>
         <button id="startButton"
         onClick={async e => {
+            setIsSubmitted(false);
+            setCurrentQuestionIndex(0);
+            setCurrentAnswer('');
+
             const data = await getQuiz(
                 settingState.difficulty,
                 settingState.category,
@@ -52,7 +57,7 @@ function Quiz({settingState}) {
             setQuizzes(data);
         }}
         >{quizzes.length == 0 ? "Start" : "Get new quizzes"}</button>
-
+        <h3>Score: {score}</h3>
         <div id="displayQuizzes">
             {
                 quizzes.map((quiz, index) => {
@@ -85,7 +90,7 @@ function Quiz({settingState}) {
                                             {
                                                  isSubmitted ? (
                                                     <i
-                                                    className={"fa-solid" + (isCorrect ? "fa-check" : "fa-xmark")}
+                                                    className={"fa-solid " + (isCorrect ? "fa-check" : "fa-xmark")}
                                                     ></i>
                                                  )
                                                  : ""
@@ -100,6 +105,13 @@ function Quiz({settingState}) {
                         className={"submitButton " + (currentAnswer === ""? "disabled" : "")}
                         onClick={e => {
                             if(currentAnswer === "") return;
+                            if(!isSubmitted)
+                            {
+                                if(quiz.correct_answers[currentAnswer+"_correct"] === "true")
+                                {
+                                    setScore(score+1);
+                                }
+                            }
                             setIsSubmitted(true);
                         }}
                         >
@@ -113,13 +125,13 @@ function Quiz({settingState}) {
                                 onClick={() => {
                                     setCurrentQuestionIndex(currentQuestionIndex + 1);
                                     setIsSubmitted(false);
+                                    setCurrentAnswer("");
                                 }}
                                 >
                                     Next
                                 </button>
                             ) : ""
                         }
-
                     </div>  
                   )
                 })
