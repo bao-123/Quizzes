@@ -44,7 +44,7 @@ function Setting({settingState, setSetting}) {
             <div className="SettingHeaders">
                 <h2>Settings</h2>
                 <i 
-                className="fa-solid fa-arrow-down-short-wide"
+                className="fa-solid fa-arrow-up-short-wide"
                 onClick={e => {
                     e.target.className = "fa-solid " + (showForm ? "fa-arrow-up-short-wide" : "fa-arrow-down-short-wide");
                     setShowForm(!showForm);

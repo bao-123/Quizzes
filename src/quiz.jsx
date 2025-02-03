@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 
 function Quiz({settingState}) {
     const [quizzes, setQuizzes] = useState([]);
-    const [currentAnswer, setCurrentAnswer] = useState("");
+    const [currentAnswer, setCurrentAnswer] = useState({});
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     async function getQuiz(difficulty, category, tags=[], questions=20) {
         try {
@@ -27,9 +28,11 @@ function Quiz({settingState}) {
         }
     }
 
+    
+
     useEffect(() => {
-        console.log(currentAnswer);
-    }, [currentAnswer]);
+        console.log(quizzes);
+    }, [quizzes]);
 
     return (
     <>
@@ -56,23 +59,67 @@ function Quiz({settingState}) {
                   return (
                     <div className={"quiz " + (index == currentQuestionIndex ? "show" : "")} key={index}>
                         <p className="questions">{quiz.question}</p>
-                        <p className="questionDescription">{quiz.description}</p>
 
                         <div className="answersContainer">
                             {
-                                Object.keys(quiz.answers).map((value, index) => (
-                                    <div 
-                                    className={"answer" + (currentAnswer == value ? "chosenAnswer" : "unchosenAnswer")}
-                                    data-is-correct={quiz.correct_answers[value+"_correct"]}
-                                    onClick={e => {
-                                        setCurrentAnswer(value);
-                                    }}
-                                    >
-                                        <p>{quiz.answers[value]}</p>
-                                    </div>
-                                ))
+                                Object.keys(quiz.answers).map((value, index) => {
+                                    if(quiz.answers[value] === null) return;
+                                    const isCorrect = quiz.correct_answers[value+"_correct"] === "true";
+                                    console.log(isSubmitted && isCorrect);
+                                    
+                                    return (
+                                        <div 
+                                        key={index}
+                                        className={
+                                            "answer " + (currentAnswer == value ? "chosen" : "unchosen")
+                                            //*Don't forget the ' ' between classes
+                                                      + ( isSubmitted ? (
+                                                        (value === currentAnswer && isCorrect)  ? " correctAnswer" : " wrongAnswer"
+                                                      ) : "")
+                                        }
+                                        onClick={e => {
+                                            setCurrentAnswer(value);
+                                        }}
+                                        >
+                                            <p>{quiz.answers[value]}</p>
+                                            {
+                                                 isSubmitted ? (
+                                                    <i
+                                                    className={"fa-solid" + (isCorrect ? "fa-check" : "fa-xmark")}
+                                                    ></i>
+                                                 )
+                                                 : ""
+                                            }
+                                        </div>
+                                    )
+                                })
                             }
                         </div>
+                        
+                        <button
+                        className={"submitButton " + (currentAnswer === ""? "disabled" : "")}
+                        onClick={e => {
+                            if(currentAnswer === "") return;
+                            setIsSubmitted(true);
+                        }}
+                        >
+                            Submit
+                        </button>
+
+                        {
+                            isSubmitted ? (
+                                <button 
+                                className="nextButton"
+                                onClick={() => {
+                                    setCurrentQuestionIndex(currentQuestionIndex + 1);
+                                    setIsSubmitted(false);
+                                }}
+                                >
+                                    Next
+                                </button>
+                            ) : ""
+                        }
+
                     </div>  
                   )
                 })
