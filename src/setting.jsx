@@ -28,7 +28,7 @@ function Setting({ settingState, setSetting }) {
         getOptions('categories');
     }, []);
 
-    //TODO Check if setting is valid
+    
     useEffect(() => {
         console.log(settingState.category);
     }, [settingState]);

@@ -192,3 +192,24 @@
     font-size: 20px;
     font-weight: 700;
 }
+
+.errorDisplay
+{
+    padding: 2rem;
+    background-color: rgb(252, 96, 96, 0.6);
+    border: 2px solid red;
+    margin: 1.5rem auto 1.5rem auto;
+}
+
+.errorDisplay > p
+{
+    font-style: italic;
+    font-weight: 600;
+}
+
+
+.errorDisplay > h3
+{
+    text-decoration: underline;
+    text-underline-offset: 0.5rem;
+}
